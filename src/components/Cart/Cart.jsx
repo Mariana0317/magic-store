@@ -33,15 +33,16 @@ const Cart = ({
               item={lineItem}
               onUpdateCartQty={handleUpdateCartQty}
               onRemoveFromCart={handleRemoveFromCart}
+              className={classes.card}
             />
           </Grid>
         ))}
       </Grid>
       <div className={classes.cartDetails}>
-        <Typography variant="h4">
+        <Typography variant="h4" gutterBottom>
           Subtotal: {cart.subtotal.formatted_with_symbol}
         </Typography>
-        <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }} gutterBottom> 
           <Button
             className={classes.emptyButton}
             size="large"
@@ -71,7 +72,7 @@ const Cart = ({
   if (!cart.line_items) return "Loading...";
   return (
     <Container>
-      <div className={classes.toolbar} />
+      <div className={classes.toolbar}  />
       <Typography className={classes.title} gutterBottom variant="h3">
         Your Shopping Cart
       </Typography>

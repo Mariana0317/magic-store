@@ -2,10 +2,7 @@ import React from "react";
 import {
   AppBar,
   Toolbar,
-  IcoButton,
   Badge,
-  MenuItem,
-  Menu,
   Typography,
   IconButton,
 } from "@material-ui/core";
@@ -20,7 +17,7 @@ const Navbar = ({ totalItems }) => {
 
   return (
     <>
-      <AppBar position="fixed" className={classes.appBar} color="inherit">
+      <AppBar position="fixed" className={classes.appBar} color="secondary">
         <Toolbar>
           <Typography
             component={Link}
@@ -35,7 +32,7 @@ const Navbar = ({ totalItems }) => {
               height="25px"
               className={classes.image}
             />
-            Commerce.js
+            Magic Store
           </Typography>
           <div className={classes.grow} />
           {location.pathname === "/" && (

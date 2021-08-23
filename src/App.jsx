@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { commerce } from "./lib/commerce";
-import { Products, Navbar, Cart } from "./components";
+import { Products, Navbar, Cart, Checkout } from "./components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 const App = () => {
   const [products, setProducts] = useState([]); //creo el estado para los productos
   const [cart, setCart] = useState({}); //este estado es para agregar al carrito y va a ser un objeto
+  const [order, setOrder] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchProducts = async () => {
     //el fetch para traer los todos los productos de la api
@@ -33,16 +35,36 @@ const App = () => {
     setCart(response.cart);
   };
 
-//funcion para borrar algo de carrito
-const handleRemoveFromCart = async (productId) => {
-  const response = await commerce.cart.remove(productId)
-  setCart(response.cart);
-}
-//funcion para eliminar todo del carrito
-const handleEmptyCart = async () => {
-  const response = await commerce.cart.empty();
-  setCart(response.cart);
-}
+  //funcion para borrar algo de carrito
+  const handleRemoveFromCart = async (productId) => {
+    const response = await commerce.cart.remove(productId);
+    setCart(response.cart);
+  };
+  //funcion para eliminar todo del carrito
+  const handleEmptyCart = async () => {
+    const response = await commerce.cart.empty();
+    setCart(response.cart);
+  };
+
+  const refreshCart = async () => {
+    const newCart = await commerce.cart.refresh();
+
+    setCart(newCart);
+  };
+
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incomingOrder = await commerce.checkout.capture(
+        checkoutTokenId,
+        newOrder
+      );
+
+      setOrder(incomingOrder);
+      refreshCart();
+    } catch (error) {
+      setErrorMessage(error.data.error.message);
+    }
+  };
 
   useEffect(() => {
     //el useefect para que pinte los prductos bien se carga la pagina en el montaje
@@ -60,14 +82,20 @@ const handleEmptyCart = async () => {
             <Products products={products} onAddToCart={handleAddToCart} />
           </Route>
           <Route exact path="/cart">
-            <Cart cart={cart} 
-            handleUpdateCartQty={handleUpdateCartQty}
-            handleRemoveFromCart={handleRemoveFromCart}
-            handleEmptyCart={handleEmptyCart} 
+            <Cart
+              cart={cart}
+              handleUpdateCartQty={handleUpdateCartQty}
+              handleRemoveFromCart={handleRemoveFromCart}
+              handleEmptyCart={handleEmptyCart}
             />
           </Route>
           <Route exact path="/checkout">
-
+            <Checkout
+              cart={cart}
+              order={order}
+              onCaptureCheckout={handleCaptureCheckout}
+              error={errorMessage}
+            />
           </Route>
         </Switch>
       </div>
